@@ -3,20 +3,24 @@
 export TEXTY_HOME="$(dirname $0)"
 cd "$TEXTY_HOME"
 
-source lib/init.sh
+init() {
+    source "$TEXTY_HOME/lib/init.sh"
+    ME="$(basename $0)"
+}
+export -f init
+
+init
 
 usage() {
-    echo "Usage: $(basename $0) command args..." >&2
+    echo "Usage: $ME command args..." >&2
     echo "Commands:" >&2
     for exe in $(ls bin) ; do
         echo "  ${exe/texty-}"
     done
+    exit 1
 }
 
-if [ $# -eq 0 ] ; then
-    usage
-    exit 1
-fi
+[ $# -eq 0 ] && usage
 
 cmd="$1"
 shift
@@ -25,7 +29,6 @@ exe="bin/texty-$cmd"
 if [ ! -x "$exe" ] ; then
     echo "Unknown command: $cmd" >&2
     usage
-    exit 1
 fi
 
 exec "$exe" "$@"
