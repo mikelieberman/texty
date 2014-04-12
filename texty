@@ -3,13 +3,13 @@
 export TEXTY_HOME="$(dirname $0)"
 cd "$TEXTY_HOME"
 
-init() {
+texty_init() {
     source "$TEXTY_HOME/lib/init.sh"
     ME="$(basename $0)"
 }
-export -f init
+export -f texty_init
 
-init
+texty_init
 
 usage() {
     echo "Usage: $ME command args..." >&2

@@ -36,3 +36,11 @@ texty_mallet() {
     "$MALLET_PATH" "$@"
 }
 
+# Convert file(s) to lines of text.
+to_text() {
+    for file in "$@" ; do
+        texty_tika -t -eUTF-8 "$file" | \
+            perl -e '$d = do {undef($/); <>}; $d =~ s#\s+# #gs; print "$d\n"'
+    done
+}
+

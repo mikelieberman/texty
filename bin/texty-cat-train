@@ -1,6 +1,6 @@
 #! /bin/bash
 
-init
+texty_init
 
 usage() {
     cat >&2 <<EOF
@@ -20,7 +20,7 @@ EOF
 
 [ $# -lt 3 ] && usage
 
-model="$1"
+model="$(cygfix $1)"
 lang="$2"
 shift 2
 
@@ -34,12 +34,13 @@ for dir in "$@" ; do
     echo "Class: $class"
     find "$dir" -type f | while read file ; do
         echo "  $file"
-        echo "$class"$'\t'$(texty_tika -t -eUTF-8 "$file" | perl -e '$data = do {undef($/); <>}; $data =~ s#\s+# #gs; print $data') >> "$trainfile"
+        echo "$class"$'\t'$(to_text "$file") >> "$trainfile"
     done
 done
 
 echo "Training model"
-texty_opennlp DoccatTrainer -lang "$lang" -model "$model" -data "$trainfile" -encoding UTF-8
+texty_opennlp DoccatTrainer \
+    -lang "$lang" -model "$model" -data "$trainfile" -encoding UTF-8
 
 rm -f "$trainfile"
 

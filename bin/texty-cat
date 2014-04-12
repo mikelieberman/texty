@@ -1,1 +1,27 @@
 #! /bin/bash
+
+texty_init
+
+usage() {
+    cat >&2 <<EOF
+Usage: $ME model files...
+
+Use a trained OpenNLP document categorizer model to categorize documents.
+Tika is used to textify files.
+
+Ex: $ME model.bin docs/foo.txt docs/bar.doc other/docs/baz.pdf
+
+EOF
+    exit 1
+}
+
+[ $# -lt 2 ] && usage
+
+model=$(cygfix "$1")
+shift
+
+for file in "$@" ; do
+    class=$(to_text "$file" | texty_opennlp Doccat "$model" 2>/dev/null | cut -d$'\t' -f1)
+    echo "$file"$'\t'"$class"
+done
+
